@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "coffee runtest.coffee",
+    "test": "mocha",
     "dev": "nodemon -q runtest.coffee"
   },
   "author": "",
