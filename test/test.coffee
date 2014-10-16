@@ -1,7 +1,7 @@
 Promise = require 'bluebird'
 
 describe '0', ->
-  log = (out) -> -> console.log out
+  log = (out) -> -> #console.log out
 
   Given log 'a'
   When log 'b'
@@ -25,3 +25,6 @@ describe '0', ->
       When log 'b2-2'
       Then log 'c2-2'
       And log 'c2-2+'
+
+  describe '4', ->
+
