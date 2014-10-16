@@ -1,0 +1,20 @@
+{
+  "name": "mocha-gwt",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "coffee runtest.coffee",
+    "dev": "nodemon -q runtest.coffee"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "coffee-script": "^1.7.1",
+    "mocha": "^1.20.1",
+    "nodemon": "^1.2.1"
+  },
+  "dependencies": {
+    "ramda": "^0.6.0"
+  }
+}
