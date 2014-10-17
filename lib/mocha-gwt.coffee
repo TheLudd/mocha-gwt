@@ -1,5 +1,9 @@
+R = require 'ramda'
 Mocha = require 'mocha'
+Suite = Mocha.Suite
+Test = Mocha.Test
 Block = require './block'
+descibeFunction = require './describe-function'
 
 mochaGWT = (suite) ->
   blockList = []
@@ -28,7 +32,20 @@ mochaGWT = (suite) ->
     context.Invariant = (fn) -> context.currentBlock.invariants.push fn
 
   suite.on 'post-require', (context, file, mocha) ->
-    blockList.forEach (b) -> b.buildMochaSuite suite
+
+    buildMochaSuite = (block)  ->
+      if block.hasTests()
+        s = Suite.create suite, block.getTitle()
+
+        block.getBefores().forEach (b) -> s.beforeAll '', b
+
+        block.getTests().forEach (t) ->
+          title = descibeFunction t
+          s.addTest new Test title, ->
+            val = t.apply @
+            throw new Error 'Expected ' + title if val == false
+
+    blockList.forEach buildMochaSuite
 
 module.exports = mochaGWT
 Mocha.interfaces['mocha-gwt'] = mochaGWT
