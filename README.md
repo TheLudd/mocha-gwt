@@ -11,7 +11,7 @@ If you are not aware of any of the mentioned projects, I recomend Justin Searl's
 I have been using [jasmine](http://jasmine.github.io/) and ```jasmine-given``` for a while but I found myself more and more favouring [mocha](http://visionmedia.github.io/mocha/) over jasmine. I find mocha to be a more mature test runner and it seems to have greater performance. I was also bothered by [some](https://github.com/searls/jasmine-given/issues/25) [bugs](https://github.com/searls/jasmine-given/issues/28) in ```jasmine-given``` and [mocha-given](https://github.com/rendro/mocha-given/issues/2). Furthermore I wanted to utalize the promise support that exists in mocha. After looking at the code, and [figuring out by hand how to write mocha interfaces](https://github.com/visionmedia/mocha/issues/56), I came to the conclusion that a complete re-write where I had full fredom to experiment was the best solution. I beleive now that I was right.
 
 #Differences from jasmine-given and mocha-given
- * Promise support. ```When -> Promise.resolve('foo').then (@result) =>``` will make ```@result``` available in the following ```Then```s
+ * Promise support. ```When -> Promise.resolve('foo').then (@result) =>``` will make ```@result``` available in the following ```Then```
  * Invariants will fail if you strictly return ```false``` just like ```Then``` and ```And```
  * Invariants are enough to run a test
 ```
@@ -34,5 +34,5 @@ describe 'myFunction', ->
 
 #Usage
  1. Install: ```npm i -D mocha-gwt```
- 2. Run mocha with it: ```mocha -u mocha-gwt```
+ 2. Run mocha with it: ```mocha --ui mocha-gwt```
  3. To use with ```coffee-script``` do ```mocha --ui mocha-gwt --require coffee-script --compilers coffee:coffee-script/register```
