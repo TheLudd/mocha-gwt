@@ -14,18 +14,18 @@ I have been using [jasmine](http://jasmine.github.io/) and ```jasmine-given``` f
  * Promise support. ```When -> Promise.resolve('foo').then (@result) =>``` will make ```@result``` available in the following ```Then```s
  * Invariants will fail if you strictly return ```false``` just like ```Then``` and ```And```
  * Invariants are enough to run a test
-     ```
-     describe 'myFunction', ->
+```
+describe 'myFunction', ->
 
-       When -> @result = myFunction @input
-       Invariant -> @result == ''
+  When -> @result = myFunction @input
+  Invariant -> @result == ''
 
-       describe 'should return an empty string for undefined input'
-         Given -> @input = ''
+  describe 'should return an empty string for undefined input'
+    Given -> @input = ''
 
-       describe 'should return an empty string for null input'
-         Given -> @input = null
-     ```
+  describe 'should return an empty string for null input'
+    Given -> @input = null
+```
  * Multiple ```Then``` functions in the same describe will act just like ```Then```, ```And```, ```And...``` I.e it will not rerun the ```Given```s and ```When```s that belong to the suite. This might be changed to follow the standard. But I have myself never encountered a test where non-repetition was not the desire.
 
 ##Shortcommings
