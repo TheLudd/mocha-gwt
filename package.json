@@ -4,8 +4,8 @@
   "description": "Given When Then for Mocha",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/unit/",
-    "dev": "nodemon -q runtest.coffee"
+    "test": "mocha test/unit/ && npm run e2e",
+    "e2e": "coffee runtest.coffee"
   },
   "author": "",
   "license": "ISC",
