@@ -3,8 +3,9 @@ Mocha = require 'mocha'
 Suite     = Mocha.Suite
 Context   = Mocha.Context
 Test      = Mocha.Test
+Block = require './block'
 
-class Block
+class Blocks
 
   constructor: (@parent, @title) ->
     @givens = @whens = @thens = @ands = @invariants = []
@@ -120,9 +121,7 @@ mochaGWT = (suite) ->
     context.Invariant = (fn) -> context.currentBlock.invariants.push fn
 
   suite.on 'post-require', (context, file, mocha) ->
-    blockList.forEach (b) ->
-      console.log b.getTitle()
-    gwt.getWaterfalls().forEach (w) -> w.createMochaSuite suite
+    blockList.forEach (b) -> b.buildMochaSuite suite
 
 module.exports = mochaGWT
 Mocha.interfaces['mocha-gwt'] = mochaGWT

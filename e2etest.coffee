@@ -1,28 +1,32 @@
 Promise = require 'bluebird'
 
 describe '0', ->
-  log = (out) -> -> #console.log out
+  log = (out) -> -> out == out
 
-  Given log 'a'
-  When log 'b'
+  Given -> @foo = 'a'
+  When -> console.log 3
 
   describe '1', ->
-    Given log 'a1'
-    When log 'b1'
-    Then log 'c1'
-    And log 'c1+'
+    Given -> Promise.resolve('bar').then (@fromGiven) =>
+    When -> Promise.resolve('foo').then (fromWhen) => @result = fromWhen + @fromGiven
+    Then -> @result == 'foobar'
 
     describe '2', ->
-      Given log 'a2'
-      When log 'b2'
-      Then log 'c2'
-      And log 'c2+'
+      Given -> 'a2'
+      When -> 'b2'
+      Then -> 'c2'
+      And -> 'c2+'
+      And -> 'c2+'
+      And -> 'c2+'
+      And -> 'c2+'
+      And -> 'c2+'
+      And -> 'c2+'
 
     describe '3', ->
-      Given log 'a2-2'
-      When log 'b2-2'
-      Then log 'c2-2'
-      And log 'c2-2+'
+      Given -> 'a2-2'
+      When -> 'b2-2'
+      Then -> 'c2-2'
+      And -> 'c2-2+'
 
   describe '4', ->
 

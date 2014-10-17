@@ -55,6 +55,12 @@ describe 'Block', ->
     block.thens.push 1
     block.hasTests().should.be.ok
 
+  it 'should return true for hasTests if parent has invariants', ->
+    parent = new Block()
+    parent.invariants.push 1
+    child = new Block(parent)
+    child.hasTests().should.be.ok
+
   it 'should return an empty array for getInvariants if there are none', ->
     block = new Block()
     block.getInvariants().should.deep.equal []
@@ -71,8 +77,29 @@ describe 'Block', ->
     child.invariants.push 2
     child.getInvariants().should.deep.equal [ 2, 1 ]
 
-  it 'should return true for hasTests if parent has invariants', ->
+  it 'should return the tests from calls to getTests', ->
+    block = new Block()
+    block.thens.push 1
+    block.getTests().should.deep.equal [ 1 ]
+
+  it 'should return thens and ands concatenated from calls to getTests', ->
+    block = new Block()
+    block.thens.push 1
+    block.ands.push 2
+    block.getTests().should.deep.equal [ 1, 2 ]
+
+  it 'should return thens ands and invarianst from calls to getTests', ->
+    block = new Block()
+    block.thens.push 1
+    block.ands.push 2
+    block.invariants.push 3
+    block.getTests().should.deep.equal [ 1, 2, 3 ]
+
+  it 'should return thens ands and parents invariants from cllas to getTests', ->
     parent = new Block()
-    parent.invariants.push 1
+    parent.invariants.push 0
     child = new Block(parent)
-    child.hasTests().should.be.ok
+    child.thens.push 1
+    child.ands.push 2
+    child.invariants.push 3
+    child.getTests().should.deep.equal [ 1, 2, 3, 0 ]

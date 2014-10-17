@@ -1,3 +1,10 @@
+chai = require 'chai'
+chai.should()
+R = require 'ramda'
+Mocha = require 'mocha'
+Suite = Mocha.Suite
+Test = Mocha.Test
+
 module.exports =
 
 class Block
@@ -23,12 +30,24 @@ class Block
 
   hasTests: -> @thens.concat(@ands, @getInvariants()).length != 0
 
-  getTests: ->
-    tests = @tests.concat @ands, @invariants
-    tests.concat @parent.getInvariants() if @parent?
+  getTests: -> @thens.concat @ands, @getInvariants()
 
-  createMochaSuite: (mainSuite) ->
-    s = Suite.create mainSuite, @title
-    @getBefores().forEach (b) -> s.beforeAll '', b
-    @getTests().forEach (t) -> s.addTest new Test '', t
-    return s
+  buildMochaSuite: (mainSuite) ->
+    regex = /.*\n/g
+    end = /;$/
+    start = /^return /
+
+    replace = R.curry (regex, replacement, str) -> str.replace regex, replacement
+
+    chopSemicolon = replace end, ''
+    chopReturn = replace start, ''
+    getLastStatement = R.compose chopReturn, chopSemicolon, R.trim, R.last, R.match regex
+
+    if @hasTests()
+      s = Suite.create mainSuite, @getTitle()
+      @getBefores().forEach (b) -> s.beforeAll '', b
+      @getTests().forEach (t) ->
+        statement = getLastStatement t.toString()
+        s.addTest new Test statement, ->
+          val = t.apply @
+          throw new Error 'Expected ' + statement if val == false

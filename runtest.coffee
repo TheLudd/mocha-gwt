@@ -4,7 +4,7 @@ path = require 'path'
 require './lib/mocha-gwt'
 testDir = 'test'
 mocha = new Mocha
-  reporter: 'dot'
+  reporter: 'spec'
   ui: 'mocha-gwt'
 
 mocha.addFile './e2etest.coffee'
