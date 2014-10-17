@@ -8,6 +8,10 @@
     "test": "mocha test/unit/ && npm run e2e",
     "e2e": "coffee runtest.coffee"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TheLudd/amend"
+  },
   "author": "",
   "license": "ISC",
   "peerDependencies": {
