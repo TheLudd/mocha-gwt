@@ -1,6 +1,6 @@
 {
   "name": "mocha-gwt",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Given When Then for Mocha",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/TheLudd/amend"
+    "url": "https://github.com/TheLudd/mocha-gwt"
   },
   "author": "",
   "license": "ISC",
