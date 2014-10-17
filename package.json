@@ -4,6 +4,7 @@
   "description": "Given When Then for Mocha",
   "main": "index.js",
   "scripts": {
+    "prepublish": "npm test",
     "test": "mocha test/unit/ && npm run e2e",
     "e2e": "coffee runtest.coffee"
   },
