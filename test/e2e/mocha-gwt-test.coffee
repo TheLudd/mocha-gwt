@@ -36,13 +36,19 @@ describe 'mocha-gwt', ->
       Then resultIs 'azbx'
 
   describe 'async support', ->
-    Given (done) -> process.nextTick => @result += '1'; done()
-    When (done) -> process.nextTick => @result += '2'; done()
+    Given (done) ->
+      setTimeout =>
+        @result += '1'
+        done()
+      , 1
+    When (done) ->
+      setTimeout =>
+        @result += '2'
+        done()
+      , 1
     Then -> @result == 'a1b2'
 
   describe 'promise support', ->
     Given -> Promise.resolve => @result += '1'
     When -> Promise.resolve => @result += '2'
     Then -> @result = 'a1b2'
-
-
