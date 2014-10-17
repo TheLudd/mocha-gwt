@@ -5,6 +5,7 @@ mocha = new Mocha
   ui: 'mocha-gwt'
 
 mocha.addFile './test/e2e/mocha-gwt-test.coffee'
+mocha.addFile './test/e2e/second-suite.coffee'
 
 mocha.run (failures) ->
   process.on 'exit', ->

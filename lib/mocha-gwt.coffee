@@ -6,9 +6,11 @@ Block = require './block'
 descibeFunction = require './describe-function'
 
 mochaGWT = (suite) ->
-  blockList = []
+  blocks = {}
 
   suite.on 'pre-require', (context, file, moch) ->
+    blockList = blocks[file] = []
+
     context.depth = 0
     context.currentBlock = null
     lastAtDepth = {}
@@ -32,6 +34,7 @@ mochaGWT = (suite) ->
     context.Invariant = (fn) -> context.currentBlock.invariants.push fn
 
   suite.on 'post-require', (context, file, mocha) ->
+    blockList = blocks[file]
 
     buildMochaSuite = (block)  ->
       if block.hasTests()
