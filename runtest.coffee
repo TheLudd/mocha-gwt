@@ -1,13 +1,10 @@
 Mocha = require 'mocha'
-fs = require 'fs'
-path = require 'path'
 require './lib/mocha-gwt'
-testDir = 'test'
 mocha = new Mocha
   reporter: 'spec'
   ui: 'mocha-gwt'
 
-mocha.addFile './e2etest.coffee'
+mocha.addFile './test/e2e/mocha-gwt.coffee'
 
 mocha.run (failures) ->
   process.on 'exit', ->
