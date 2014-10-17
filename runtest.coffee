@@ -4,7 +4,7 @@ mocha = new Mocha
   reporter: 'spec'
   ui: 'mocha-gwt'
 
-mocha.addFile './test/e2e/mocha-gwt.coffee'
+mocha.addFile './test/e2e/mocha-gwt-test.coffee'
 
 mocha.run (failures) ->
   process.on 'exit', ->
