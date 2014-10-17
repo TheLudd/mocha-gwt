@@ -4,6 +4,31 @@ Suite     = Mocha.Suite
 Context   = Mocha.Context
 Test      = Mocha.Test
 
+class Block
+
+  constructor: (@parent, @title) ->
+    @givens = @whens = @thens = @ands = @invariants = []
+
+  getTitle: ->
+    parentTitle = @parent.getTitle() if @parent?
+    [ parentTitle, @title ].join ' '
+
+  getBefores: ->
+    befores = if @parent? then @parent.getBefores() else []
+    befores.concat @givens, @whens
+
+  hasTests: -> @thens.concat(@ands, @invariants).length != 0
+
+  getTests: ->
+    tests = @tests.concat @ands, @invariants
+    tests.concat @parent.getInvariants() if @parent?
+
+  createMochaSuite: (mainSuite) ->
+    s = Suite.create mainSuite, @title
+    @getBefores().forEach (b) -> s.beforeAll '', b
+    @_getTests().forEach (t) -> s.addTest new Test '', t
+    return s
+
 class Waterfall
 
   constructor: (parent, @title) ->
@@ -64,6 +89,7 @@ class GWTSuite
 mochaGWT = (suite) ->
   gwtIndex = 0
   gwt = new GWTSuite()
+  blockList = []
 
   suite.on 'pre-require', (context, file, moch) ->
     rootDescribe = null
@@ -71,46 +97,31 @@ mochaGWT = (suite) ->
     suite.ctx = new Context
 
     context.depth = 0
-    context.currentDescribe = null
-    context.parentDescribe = null
+    context.currentBlock = null
+
+    lastAtDepth = {}
 
     context.describe = (title, fn) ->
-      context.depth++
-      pT = if context.currentParent then currentParent.title else ''
-      console.log title, pT
+      ++context.depth
 
-      context.lastDescibe =
-        parent: context.currentParent
-        title: title
-        depth: context.depth
+      parent = lastAtDepth[context.depth - 1]
+      context.currentBlock = new Block parent, title
 
-      context.currentDescribe =
-        parent: context.currentParent
-        title: title
-        depth: context.depth
+      lastAtDepth[context.depth] = context.currentBlock
+      blockList.push context.currentBlock
 
-      context.currentParent = context.currentDescribe
-      @__gwtIndex = gwtIndex++
       fn.apply()
-      context.currentDescribe = context.currentParent
-      context.depth--
+      --context.depth
 
-    context.Given = (fn) ->
-      gwt.addGiven fn, @__gwtIndex, context.currentDescribe
-
-    context.When = (fn) ->
-      gwt.addWhen fn, @__gwtIndex, context.currentDescribe
-
-    context.Then = (fn) ->
-      gwt.addThen fn, context.currentDescribe
-
-    context.And = (fn) ->
-      gwt.addAnd fn, context.currentDescribe
-
-    context.Invariant = (fn) ->
-      gwt.addInvariant fn, context.currentDescribe
+    context.Given = (fn) -> context.currentBlock.givens.push fn
+    context.When = (fn) -> context.currentBlock.whens.push fn
+    context.Then = (fn) -> context.currentBlock.thens.push fn
+    context.And = (fn) -> context.currentBlock.ands.push fn
+    context.Invariant = (fn) -> context.currentBlock.invariants.push fn
 
   suite.on 'post-require', (context, file, mocha) ->
+    blockList.forEach (b) ->
+      console.log b.getTitle()
     gwt.getWaterfalls().forEach (w) -> w.createMochaSuite suite
 
 module.exports = mochaGWT

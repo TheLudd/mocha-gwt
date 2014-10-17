@@ -5,8 +5,6 @@ describe '0', ->
 
   Given log 'a'
   When log 'b'
-  Then log 'c'
-  Invariant log 'I'
 
   describe '1', ->
     Given log 'a1'
