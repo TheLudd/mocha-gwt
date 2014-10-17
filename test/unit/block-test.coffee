@@ -47,6 +47,18 @@ describe 'Block', ->
     child.givens.push 4
     child.getBefores().should.deep.equal [ 2, 4, 1, 3 ]
 
+  it 'should return parents givens and whens in many steps', ->
+    top = new Block()
+    top.givens.push 'a'
+    top.whens.push 'b'
+    parent = new Block(top)
+    parent.whens.push 1
+    parent.givens.push 2
+    child = new Block(parent)
+    child.whens.push 3
+    child.givens.push 4
+    child.getBefores().should.deep.equal [ 'a', 2, 4, 'b', 1, 3 ]
+
   it 'should return false for hasTests if there are no tests', ->
     new Block().hasTests().should.not.be.ok
 

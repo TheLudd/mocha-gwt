@@ -21,9 +21,17 @@ class Block
     [ parentTitle, @title ].join(' ').trim()
 
   getBefores: ->
-    givens = if @parent? then @parent.givens else []
-    whens = if @parent? then @parent.whens else []
+    givens = if @parent? then @parent.getAllGivens() else []
+    whens = if @parent? then @parent.getAllWhens() else []
     givens.concat @givens, whens, @whens
+
+  getAllGivens: ->
+    parents = if @parent? then @parent.getAllGivens() else []
+    parents.concat @givens
+
+  getAllWhens: ->
+    parents = if @parent? then @parent.getAllWhens() else []
+    parents.concat @whens
 
   getInvariants: ->
     if @parent? then @invariants.concat @parent.getInvariants() else @invariants
