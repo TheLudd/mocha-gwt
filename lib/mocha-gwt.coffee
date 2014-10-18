@@ -58,7 +58,7 @@ mochaGWT = (suite) ->
           title = descibeFunction t
           test = new Test title, ->
             val = t.apply @
-            throw  ewError 'Expected ' + title if val == false
+            throw Error 'Expected ' + title if val == false
           test.pending = shouldSkip
           s.addTest test
 
