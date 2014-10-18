@@ -1,13 +1,17 @@
+R = require 'ramda'
+
 module.exports =
 
 class Block
 
-  constructor: (@parent, @title) ->
+  constructor: (@parent, @title, opts = {}) ->
     @givens = []
     @whens = []
     @thens = []
     @ands = []
     @invariants = []
+    @pending = R.path('pending', @parent) || opts.pending
+    @only = R.path('only', @parent) || opts.only
 
   getTitle: ->
     parentTitle = @parent.getTitle() if @parent?

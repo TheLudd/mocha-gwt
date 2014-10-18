@@ -115,3 +115,13 @@ describe 'Block', ->
     child.ands.push 2
     child.invariants.push 3
     child.getTests().should.deep.equal [ 1, 2, 3, 0 ]
+
+  it 'should be pending if parent is pending', ->
+    parent = new Block null, null, pending: true
+    child = new Block parent
+    child.pending.should.be.ok
+
+  it 'inherit parents only', ->
+    parent = new Block null, null, only: true
+    child = new Block parent
+    child.only.should.be.ok

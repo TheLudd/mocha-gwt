@@ -15,17 +15,25 @@ mochaGWT = (suite) ->
     context.currentBlock = null
     lastAtDepth = {}
 
-    context.describe = (title, fn) ->
+    addBlock = (title, fn, opts) ->
       ++context.depth
 
       parent = lastAtDepth[context.depth - 1]
-      context.currentBlock = new Block parent, title
+      context.currentBlock = new Block parent, title, opts
 
       lastAtDepth[context.depth] = context.currentBlock
       blockList.push context.currentBlock
 
       fn.apply()
       --context.depth
+
+    context.describe = addBlock
+
+    context.describe.skip =
+    context.xdescribe = (title, fn) -> addBlock title, fn, pending: true
+
+    context.describe.only =
+    context.ddescribe = (title, fn) -> addBlock title, fn, only: true
 
     context.Given = (fn) -> context.currentBlock.givens.push fn
     context.When = (fn) -> context.currentBlock.whens.push fn
@@ -35,18 +43,24 @@ mochaGWT = (suite) ->
 
   suite.on 'post-require', (context, file, mocha) ->
     blockList = blocks[file]
+    determineSkip = (block) ->
+      block.pending == true
 
     buildMochaSuite = (block)  ->
       if block.hasTests()
-        s = Suite.create suite, block.getTitle()
+        shouldSkip = determineSkip block
 
+        s = Suite.create suite, block.getTitle()
+        mocha.grep s.fullTitle() if block.only
         block.getBefores().forEach (b) -> s.beforeAll '', b
 
         block.getTests().forEach (t) ->
           title = descibeFunction t
-          s.addTest new Test title, ->
+          test = new Test title, ->
             val = t.apply @
-            throw new Error 'Expected ' + title if val == false
+            throw  ewError 'Expected ' + title if val == false
+          test.pending = shouldSkip
+          s.addTest test
 
     blockList.forEach buildMochaSuite
 
