@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "prepublish": "npm test",
-    "test": "mocha test/unit/ && npm run e2e",
+    "test": "npm run unit && npm run e2e",
+    "unit": "mocha test/unit/",
     "e2e": "coffee runtest.coffee"
   },
   "repository": {
