@@ -28,10 +28,6 @@ describe 'myFunction', ->
 ```
  * Multiple ```Then``` functions in the same describe will act just like ```Then```, ```And```, ```And...``` I.e it will not rerun the ```Given``` and ```When``` functions that belong to the suite. This might be changed to follow the standard. But I have myself never encountered a test where non-repetition was *not* the desire.
 
-##Shortcommings 
- * Just as with ```jasmine-given``` it is possible to return strictly false to make a test fail, but the error output is currently not on the same level as ```jasmine-given.``` Fixing this is the current priority.
- * Lack of documentation
-
 #Usage
  1. Install: ```npm i -D mocha-gwt```
  2. Run mocha with it: ```mocha --ui mocha-gwt```
