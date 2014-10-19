@@ -10,8 +10,21 @@ chopSemicolon = replace end, ''
 chopReturn = replace start, ''
 getLastStatement = R.compose chopReturn, chopSemicolon, R.trim, R.last, R.match line
 
-module.exports = (fn) ->
+evalWith = R.curry (thisObj, code) ->
+  try
+    return (-> eval(code)).call thisObj
+  catch e
+    return code
+
+evaulateTestCode = R.compose R.join(' '), R.useWith R.map, evalWith
+
+module.exports = (fn, thisObj) ->
   if fn? && fn.toString() != emptyFunction
-    getLastStatement fn
+    s = getLastStatement fn
+    parts = s.split ' '
+    if parts.length == 3 && thisObj?
+      return evaulateTestCode thisObj, parts
+    else
+      return s
   else
     ''

@@ -1,3 +1,4 @@
+AssertionError = require 'assertion-error'
 R = require 'ramda'
 Mocha = require 'mocha'
 Suite = Mocha.Suite
@@ -27,7 +28,7 @@ mochaGWT = (suite) ->
       lastAtDepth[depth] = context.currentBlock
       blockList.push currentBlock
 
-      fn.apply()
+      fn.apply(@)
       --depth
 
     global.describe = addBlock
@@ -59,10 +60,27 @@ mochaGWT = (suite) ->
           block.getBefores().forEach (b) -> s.beforeAll '', b
 
           block.getTests().forEach (t) ->
-            title = descibeFunction t
+            title = 'then ' + descibeFunction t
             test = new Test title, ->
-              val = t.apply @
-              throw Error 'Expected ' + title if val == false
+              try
+                val = t.apply @
+              catch e
+                throw e
+
+              if val == false
+                description = descibeFunction t, @
+                errorMessage = 'Expected ' + description
+                parts = description.split ' '
+                actual = parts[0]
+                isEqualityTest = parts[1] == '==='
+                expected = parts[2]
+
+                Error.captureStackTrace = false
+                throw new AssertionError 'Expected ' + errorMessage,
+                  actual: actual
+                  expected: expected
+                  showDiff: isEqualityTest
+
             test.pending = shouldSkip
             s.addTest test
 
