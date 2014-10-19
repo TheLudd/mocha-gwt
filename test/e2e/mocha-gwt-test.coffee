@@ -4,7 +4,8 @@ describe 'mocha-gwt', ->
   append = (char) => -> @result += char
   resultIs = (expected) => -> @result == expected
 
-  Given -> @result = ''
+  Given ->
+    @result = ''
   Given append 'a'
   When append 'b'
   Then resultIs 'ab'

@@ -6,63 +6,67 @@ Block = require './block'
 descibeFunction = require './describe-function'
 
 mochaGWT = (suite) ->
-  blocks = {}
+  blockList = []
+  processedFiles = []
+  onlyFound = false
 
-  suite.on 'pre-require', (context, file, moch) ->
-    blockList = blocks[file] = []
+  determineSkip = (block) ->
+    block.pending == true || (onlyFound && !block.only)
 
-    context.depth = 0
+  suite.on 'pre-require', (context, file, mocha) ->
+    depth = 0
     context.currentBlock = null
     lastAtDepth = {}
 
     addBlock = (title, fn, opts) ->
-      ++context.depth
+      ++depth
 
-      parent = lastAtDepth[context.depth - 1]
+      parent = lastAtDepth[depth - 1]
       context.currentBlock = new Block parent, title, opts
 
-      lastAtDepth[context.depth] = context.currentBlock
-      blockList.push context.currentBlock
+      lastAtDepth[depth] = context.currentBlock
+      blockList.push currentBlock
 
       fn.apply()
-      --context.depth
+      --depth
 
-    context.describe = addBlock
+    global.describe = addBlock
 
-    context.describe.skip =
-    context.xdescribe = (title, fn) -> addBlock title, fn, pending: true
+    global.describe.skip =
+    global.xdescribe = (title, fn) ->
+      addBlock title, fn, pending: true
 
-    context.describe.only =
-    context.ddescribe = (title, fn) -> addBlock title, fn, only: true
+    global.describe.only =
+    global.ddescribe = (title, fn) ->
+      addBlock title, fn, only: true
+      onlyFound = true
 
-    context.Given = (fn) -> context.currentBlock.givens.push fn
-    context.When = (fn) -> context.currentBlock.whens.push fn
-    context.Then = (fn) -> context.currentBlock.thens.push fn
-    context.And = (fn) -> context.currentBlock.ands.push fn
-    context.Invariant = (fn) -> context.currentBlock.invariants.push fn
+    global.Given = (fn) -> global.currentBlock.givens.push fn
+    global.When = (fn) -> global.currentBlock.whens.push fn
+    global.Then = (fn) -> global.currentBlock.thens.push fn
+    global.And = (fn) -> global.currentBlock.ands.push fn
+    global.Invariant = (fn) -> global.currentBlock.invariants.push fn
 
   suite.on 'post-require', (context, file, mocha) ->
-    blockList = blocks[file]
-    determineSkip = (block) ->
-      block.pending == true
+    processedFiles.push file
 
-    buildMochaSuite = (block)  ->
-      if block.hasTests()
-        shouldSkip = determineSkip block
+    if processedFiles.length == mocha.files.length
+      buildMochaSuite = (block)  ->
+        if block.hasTests()
+          shouldSkip = determineSkip block
 
-        s = Suite.create suite, block.getTitle()
-        mocha.grep s.fullTitle() if block.only
-        block.getBefores().forEach (b) -> s.beforeAll '', b
+          s = Suite.create suite, block.getTitle()
+          block.getBefores().forEach (b) -> s.beforeAll '', b
 
-        block.getTests().forEach (t) ->
-          title = descibeFunction t
-          test = new Test title, ->
-            val = t.apply @
-            throw Error 'Expected ' + title if val == false
-          test.pending = shouldSkip
-          s.addTest test
+          block.getTests().forEach (t) ->
+            title = descibeFunction t
+            test = new Test title, ->
+              val = t.apply @
+              throw Error 'Expected ' + title if val == false
+            test.pending = shouldSkip
+            s.addTest test
 
-    blockList.forEach buildMochaSuite
+      blockList.forEach buildMochaSuite
 
 module.exports = mochaGWT
 Mocha.interfaces['mocha-gwt'] = mochaGWT
