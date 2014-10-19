@@ -2,3 +2,4 @@
 --require chai
 --compilers coffee:coffee-script/register
 --recursive
+--reporter dot
