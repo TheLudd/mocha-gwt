@@ -50,6 +50,6 @@ describe 'mocha-gwt', ->
     Then -> @result == 'a1b2'
 
   describe 'promise support', ->
-    Given -> Promise.resolve => @result += '1'
-    When -> Promise.resolve => @result += '2'
-    Then -> @result = 'a1b2'
+    Given -> Promise.resolve().then => @result += '1'
+    When -> Promise.resolve().then => @result += '2'
+    Then -> @result == 'a1b2'
