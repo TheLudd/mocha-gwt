@@ -29,7 +29,7 @@ mochaGWT = (suite) ->
       blockList.push currentBlock
 
       fn.apply(@)
-      --depth
+      context.currentBlock = lastAtDepth[--depth]
 
     global.describe = addBlock
 

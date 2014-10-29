@@ -41,6 +41,8 @@ describe 'mocha-gwt', ->
       When append 'x'
       Then resultIs 'azbx'
 
+  Then resultIs 'ab'
+
   describe 'async support', ->
     Given (done) ->
       setTimeout =>
