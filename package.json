@@ -1,6 +1,6 @@
 {
   "name": "mocha-gwt",
-  "version": "0.1.8-dev",
+  "version": "0.1.8",
   "description": "Given When Then for Mocha",
   "main": "index.js",
   "scripts": {
