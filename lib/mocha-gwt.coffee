@@ -47,6 +47,8 @@ mochaGWT = (suite) ->
     global.Then = (fn) -> global.currentBlock.thens.push fn
     global.And = (fn) -> global.currentBlock.ands.push fn
     global.Invariant = (fn) -> global.currentBlock.invariants.push fn
+    global.beforeAll = (fn) -> suite.beforeAll fn
+    global.afterAll = (fn) -> suite.afterAll fn
 
   suite.on 'post-require', (context, file, mocha) ->
     processedFiles.push file

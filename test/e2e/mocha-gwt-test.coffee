@@ -3,12 +3,17 @@ Promise = require 'bluebird'
 describe 'mocha-gwt', ->
   append = (char) => -> @result += char
   resultIs = (expected) => -> @result == expected
+  beforeAllCheck = 1
 
-  Given ->
-    @result = ''
+  beforeAll ->
+    if beforeAllCheck++ > 1
+      throw new Error 'Before all was called more than once'
+
+  Given -> @result = ''
   Given append 'a'
   When append 'b'
   Then resultIs 'ab'
+  Invariant -> beforeAllCheck == 2
 
   describe 'nested given', ->
     Given append '1'
