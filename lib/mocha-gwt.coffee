@@ -7,9 +7,12 @@ Block = require './block'
 descibeFunction = require './describe-function'
 
 mochaGWT = (suite) ->
-  blockList = []
+  blockList = {}
   processedFiles = []
   onlyFound = false
+  beforeAlls = {}
+  afterAlls = {}
+  fileParents = {}
 
   determineSkip = (block) ->
     block.pending == true || (onlyFound && !block.only)
@@ -18,6 +21,9 @@ mochaGWT = (suite) ->
     depth = 0
     context.currentBlock = null
     lastAtDepth = {}
+    blockList[file] = []
+    beforeAlls[file] = []
+    afterAlls[file] = []
 
     addBlock = (title, fn, opts) ->
       ++depth
@@ -26,7 +32,7 @@ mochaGWT = (suite) ->
       context.currentBlock = new Block parent, title, opts
 
       lastAtDepth[depth] = context.currentBlock
-      blockList.push currentBlock
+      blockList[file].push currentBlock
 
       fn.apply(@)
       context.currentBlock = lastAtDepth[--depth]
@@ -47,46 +53,59 @@ mochaGWT = (suite) ->
     global.Then = (fn) -> global.currentBlock.thens.push fn
     global.And = (fn) -> global.currentBlock.ands.push fn
     global.Invariant = (fn) -> global.currentBlock.invariants.push fn
-    global.beforeAll = (fn) -> suite.beforeAll fn
-    global.afterAll = (fn) -> suite.afterAll fn
+    global.beforeAll = (fn) -> beforeAlls[file].push fn
+    global.afterAll = (fn) -> afterAlls[file].push fn
+
+    #global.beforeAll = (fn) -> suite.beforeAll fn
+    #global.afterAll = (fn) -> suite.afterAll fn
 
   suite.on 'post-require', (context, file, mocha) ->
     processedFiles.push file
+    fileParents[file] = Suite.create suite, ''
+
+    beforeAlls[file].forEach (fn) ->
+      fileParents[file].beforeAll fn
+    afterAlls[file].forEach (fn) ->
+      fileParents[file].afterAll fn
+
+    buildMochaSuite = (block, file)  ->
+      fileParent = fileParents[file]
+
+      if block.hasTests()
+        shouldSkip = determineSkip block
+
+        s = Suite.create fileParent, block.getTitle()
+        block.getBefores().forEach (b) -> s.beforeAll '', b unless shouldSkip
+
+        block.getTests().forEach (t) ->
+          title = 'then ' + descibeFunction t
+          test = new Test title, ->
+            try
+              val = t.apply @
+            catch e
+              throw e
+
+            if val == false
+              description = descibeFunction t, @
+              errorMessage = 'Expected ' + description
+              parts = description.split ' '
+              actual = parts[0]
+              isEqualityTest = parts[1] == '==='
+              expected = parts[2]
+
+              Error.captureStackTrace = false
+              throw new AssertionError 'Expected ' + errorMessage,
+                actual: actual
+                expected: expected
+                showDiff: isEqualityTest
+
+          test.pending = shouldSkip
+          s.addTest test
 
     if processedFiles.length == mocha.files.length
-      buildMochaSuite = (block)  ->
-        if block.hasTests()
-          shouldSkip = determineSkip block
-
-          s = Suite.create suite, block.getTitle()
-          block.getBefores().forEach (b) -> s.beforeAll '', b unless shouldSkip
-
-          block.getTests().forEach (t) ->
-            title = 'then ' + descibeFunction t
-            test = new Test title, ->
-              try
-                val = t.apply @
-              catch e
-                throw e
-
-              if val == false
-                description = descibeFunction t, @
-                errorMessage = 'Expected ' + description
-                parts = description.split ' '
-                actual = parts[0]
-                isEqualityTest = parts[1] == '==='
-                expected = parts[2]
-
-                Error.captureStackTrace = false
-                throw new AssertionError 'Expected ' + errorMessage,
-                  actual: actual
-                  expected: expected
-                  showDiff: isEqualityTest
-
-            test.pending = shouldSkip
-            s.addTest test
-
-      blockList.forEach buildMochaSuite
+      processedFiles.forEach (f) ->
+        blockList[f].forEach (block) ->
+          buildMochaSuite block, f
 
 module.exports = mochaGWT
 Mocha.interfaces['mocha-gwt'] = mochaGWT

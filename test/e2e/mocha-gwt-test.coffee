@@ -6,8 +6,12 @@ describe 'mocha-gwt', ->
   beforeAllCheck = 1
 
   beforeAll ->
+    global.cleanMeUp = 'dirty'
     if beforeAllCheck++ > 1
       throw new Error 'Before all was called more than once'
+
+  afterAll ->
+    global.cleanMeUp = undefined
 
   Given -> @result = ''
   Given append 'a'
