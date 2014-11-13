@@ -60,3 +60,10 @@ describe 'mocha-gwt', ->
     Given -> Promise.resolve().then => @result += '1'
     When -> Promise.resolve().then => @result += '2'
     Then -> @result == 'a1b2'
+
+  xdescribe 'ignored should not be called', ->
+    Given -> throw new Error 'should not reach this given'
+    When -> throw new Error 'should not reach this when'
+    Then -> throw new Error 'should not reach this then'
+    And -> throw new Error 'should not reach this and'
+
