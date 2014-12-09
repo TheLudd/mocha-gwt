@@ -1,4 +1,5 @@
 R = require 'ramda'
+tapLog = R.tap console.log
 line = /.*\n/g
 end = /;$/
 start = /^return /
@@ -13,13 +14,25 @@ getLastStatement = R.compose chopReturn, chopSemicolon, R.trim, R.last, R.match 
 shouldEvaluate = (parts) ->
   R.contains '===', parts
 
+undefinedToString = (val) ->
+  if val == undefined
+    return 'undefined'
+  else if val == null
+    return 'null'
+  else
+    return val
+
+joinAll = R.curry (separator, array) ->
+  R.compose(R.join(separator), R.map(undefinedToString))(array)
+
 evalWith = R.curry (thisObj, code) ->
   try
-    return (-> eval(code)).call thisObj
+    res = (-> eval(code)).call thisObj
+    return res
   catch e
-    return code
+    code
 
-evaulateTestCode = R.compose R.join(' '), R.useWith R.map, evalWith
+evaulateTestCode = R.compose joinAll(' '), R.useWith R.map, evalWith
 
 module.exports = (fn, thisObj) ->
   if fn? && fn.toString() != emptyFunction

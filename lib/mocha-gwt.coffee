@@ -6,6 +6,8 @@ Test = Mocha.Test
 Block = require './block'
 descibeFunction = require './describe-function'
 
+comparisonRegExp = new RegExp('===|==|!==|!=|<|<=|>|>=')
+
 mochaGWT = (suite) ->
   blockList = {}
   processedFiles = []
@@ -83,10 +85,10 @@ mochaGWT = (suite) ->
             if val == false
               description = descibeFunction t, @
               errorMessage = 'Expected ' + description
-              parts = description.split ' '
-              actual = parts[0]
-              isEqualityTest = parts[1] == '==='
-              expected = parts[2]
+              parts = description.split comparisonRegExp
+              if isEqualityTest = parts.length == 2
+                actual = parts[0].trim()
+                expected = parts[1].trim()
 
               Error.captureStackTrace = false
               throw new AssertionError 'Expected ' + errorMessage,

@@ -29,7 +29,10 @@ describe 'describeFunction', ->
     description('1 === 1').from((-> @value == 1), value: 1)
 
   it 'should handle non evaluatable values', ->
-    description('a + b').from -> a + b
+    description('a === b').from -> a == b
+
+  it 'should print undefined for undefined values', ->
+    description('undefined === b').from (-> @foo == 'b'), bar: '42'
 
   it 'should handle several tokens', ->
     description("this is wrong === 'this is right'")
