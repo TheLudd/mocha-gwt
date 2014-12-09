@@ -10,6 +10,9 @@ chopSemicolon = replace end, ''
 chopReturn = replace start, ''
 getLastStatement = R.compose chopReturn, chopSemicolon, R.trim, R.last, R.match line
 
+shouldEvaluate = (parts) ->
+  R.contains '===', parts
+
 evalWith = R.curry (thisObj, code) ->
   try
     return (-> eval(code)).call thisObj
@@ -22,7 +25,7 @@ module.exports = (fn, thisObj) ->
   if fn? && fn.toString() != emptyFunction
     s = getLastStatement fn
     parts = s.split ' '
-    if parts.length == 3 && thisObj?
+    if shouldEvaluate(parts) && thisObj?
       return evaulateTestCode thisObj, parts
     else
       return s

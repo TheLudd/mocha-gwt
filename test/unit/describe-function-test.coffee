@@ -30,3 +30,7 @@ describe 'describeFunction', ->
 
   it 'should handle non evaluatable values', ->
     description('a + b').from -> a + b
+
+  it 'should handle several tokens', ->
+    description("this is wrong === 'this is right'")
+      .from((-> @result == 'this is right'), result: 'this is wrong')
