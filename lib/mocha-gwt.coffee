@@ -58,8 +58,7 @@ mochaGWT = (suite) ->
     global.beforeAll = (fn) -> beforeAlls[file].push fn
     global.afterAll = (fn) -> afterAlls[file].push fn
 
-    #global.beforeAll = (fn) -> suite.beforeAll fn
-    #global.afterAll = (fn) -> suite.afterAll fn
+    global.afterBlock = (fn) -> global.currentBlock.afterBlocks.push fn
 
   suite.on 'post-require', (context, file, mocha) ->
     processedFiles.push file
@@ -73,6 +72,7 @@ mochaGWT = (suite) ->
 
         s = Suite.create fileParent, block.getTitle()
         block.getBefores().forEach (b) -> s.beforeAll '', b unless shouldSkip
+        block.getAfterBlocks().forEach (ab) -> s.afterAll '', ab unless shouldSkip
 
         block.getTests().forEach (t) ->
           title = 'then ' + descibeFunction t

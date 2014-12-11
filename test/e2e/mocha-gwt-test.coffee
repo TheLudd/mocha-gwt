@@ -71,3 +71,13 @@ describe 'mocha-gwt', ->
     Then -> throw new Error 'should not reach this then'
     And -> throw new Error 'should not reach this and'
 
+  describe 'after is called after its block', ->
+    foo = undefined
+    Given -> foo = 1 unless foo?
+    Then -> foo == 1
+    afterBlock -> foo = 2
+
+    describe 'after should have been called', ->
+      Then -> foo == 2
+
+

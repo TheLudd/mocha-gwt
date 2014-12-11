@@ -10,6 +10,7 @@ class Block
     @thens = []
     @ands = []
     @invariants = []
+    @afterBlocks = []
     @pending = R.path('pending', @parent) || opts.pending
     @only = R.path('only', @parent) || opts.only
 
@@ -21,6 +22,10 @@ class Block
     givens = if @parent? then @parent._getGivenHierarchy() else []
     whens = if @parent? then @parent._getWhenHierarchy() else []
     givens.concat @givens, whens, @whens
+
+  getAfterBlocks: ->
+    afterBlocks = if @parent then @parent.getAfterBlocks() else []
+    @afterBlocks.concat afterBlocks
 
   _getGivenHierarchy: ->
     parents = if @parent? then @parent._getGivenHierarchy() else []

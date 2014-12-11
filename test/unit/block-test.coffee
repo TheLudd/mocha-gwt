@@ -125,3 +125,16 @@ describe 'Block', ->
     parent = new Block null, null, only: true
     child = new Block parent
     child.only.should.be.ok
+
+  it 'should return added afters', ->
+    block = new Block()
+    block.afterBlocks.push 1
+    block.getAfterBlocks().should.deep.equal [ 1 ]
+
+  it 'should return a hierarchy of afters', ->
+    parent = new Block()
+    parent.afterBlocks.push 2
+    child = new Block(parent)
+    child.afterBlocks.push 1
+    child.getAfterBlocks().should.deep.equal [ 1, 2 ]
+
