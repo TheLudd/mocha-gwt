@@ -27,6 +27,6 @@
   "dependencies": {
     "assertion-error": "^1.0.0",
     "coffee-script": "^1.7.1",
-    "ramda": "^0.7.0"
+    "ramda": "^0.11.0"
   }
 }
