@@ -11,8 +11,8 @@ class Block
     @ands = []
     @invariants = []
     @afterBlocks = []
-    @pending = R.path('pending', @parent) || opts.pending
-    @only = R.path('only', @parent) || opts.only
+    @pending = R.path(['pending'], @parent) || opts.pending
+    @only = R.path(['only'], @parent) || opts.only
 
   getTitle: ->
     parentTitle = @parent.getTitle() if @parent?
