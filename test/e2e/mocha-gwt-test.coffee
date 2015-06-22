@@ -13,6 +13,9 @@ describe 'mocha-gwt', ->
   afterAll ->
     global.cleanMeUp = undefined
 
+  afterAll ->
+    throw new Error 'Context not available' unless @result?
+
   Given -> @result = ''
   Given append 'a'
   When append 'b'
