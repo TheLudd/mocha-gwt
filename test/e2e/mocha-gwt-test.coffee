@@ -71,6 +71,12 @@ describe 'mocha-gwt', ->
     Then -> throw new Error 'should not reach this then'
     And -> throw new Error 'should not reach this and'
 
+    describe 'and neither their children', ->
+      Given -> throw new Error 'should not reach child given'
+      When -> throw new Error 'should not reach child when'
+      Then -> throw new Error 'should not reach child then'
+      And -> throw new Error 'should not reach child and'
+
   describe 'after is called after its block', ->
     foo = undefined
     Given -> foo = 1 unless foo?
