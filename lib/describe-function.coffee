@@ -36,7 +36,7 @@ evaulateTestCode = R.compose joinAll(' '), R.useWith R.map, evalWith
 
 module.exports = (fn, thisObj) ->
   if fn? && fn.toString() != emptyFunction
-    s = getLastStatement fn
+    s = getLastStatement fn.toString()
     parts = s.split ' '
     if shouldEvaluate(parts) && thisObj?
       return evaulateTestCode thisObj, parts
