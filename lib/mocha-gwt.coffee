@@ -39,14 +39,19 @@ mochaGWT = (suite) ->
       fn.apply(@)
       context.currentBlock = lastAtDepth[--depth]
 
-    global.describe = addBlock
+    global.describe =
+    global.context = addBlock
 
     global.describe.skip =
-    global.xdescribe = (title, fn) ->
+    global.xdescribe =
+    global.context.skip =
+    global.xcontext = (title, fn) ->
       addBlock title, fn, pending: true
 
     global.describe.only =
-    global.ddescribe = (title, fn) ->
+    global.ddescribe =
+    global.context.only =
+    global.ccontext = (title, fn) ->
       addBlock title, fn, only: true
       onlyFound = true
 

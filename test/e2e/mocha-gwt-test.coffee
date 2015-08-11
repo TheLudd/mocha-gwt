@@ -86,4 +86,9 @@ describe 'mocha-gwt', ->
     describe 'after should have been called', ->
       Then -> foo == 2
 
-
+  describe 'aliases', ->
+    Then -> global.context == describe
+    Then -> global.context.skip == describe.skip
+    And  -> global.xcontext == describe.skip
+    Then -> global.context.only == describe.only
+    And  -> global.ccontext == describe.only
