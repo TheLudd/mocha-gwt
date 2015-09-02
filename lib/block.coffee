@@ -24,7 +24,7 @@ class Block
     givens.concat @givens, whens, @whens
 
   getAfterBlocks: ->
-    afterBlocks = if @parent then @parent.getAfterBlocks() else []
+    afterBlocks = if @parent? then @parent.getAfterBlocks() else []
     @afterBlocks.concat afterBlocks
 
   _getGivenHierarchy: ->
