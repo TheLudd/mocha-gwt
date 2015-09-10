@@ -77,9 +77,8 @@ mochaGWT = (suite) ->
 
         s = Suite.create fileParent, block.getTitle()
         block.getBefores().forEach (b) -> s.beforeAll '', b unless shouldSkip
-        block.getAfterBlocks().forEach (ab) -> s.afterAll '', ab unless shouldSkip
 
-        block.getTests().forEach (t) ->
+        block.getTests().concat(block.getAfterBlocks()).forEach (t) ->
           title = 'then ' + descibeFunction t
           test = new Test title, ->
             try

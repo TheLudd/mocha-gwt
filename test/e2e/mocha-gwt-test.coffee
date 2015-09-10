@@ -79,9 +79,12 @@ describe 'mocha-gwt', ->
 
   describe 'after is called after its block', ->
     foo = undefined
+    thisFoo = undefined
     Given -> foo = 1 unless foo?
+    Given -> @localFoo = 'foo'
     Then -> foo == 1
     afterBlock -> foo = 2
+    afterBlock -> @localFoo == 'foo'
 
     describe 'after should have been called', ->
       Then -> foo == 2
