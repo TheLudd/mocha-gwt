@@ -8,6 +8,9 @@ descibeFunction = require './describe-function'
 
 comparisonRegExp = new RegExp('===|==|!==|!=|<|<=|>|>=')
 
+wrapString = R.curry (wrapIn, string) -> wrapIn + string + wrapIn
+wrapIfString = R.ifElse R.is(String), wrapString("'"), R.identity
+
 mochaGWT = (suite) ->
   blockList = {}
   processedFiles = []
@@ -96,7 +99,7 @@ mochaGWT = (suite) ->
 
               Error.captureStackTrace = false
               throw new AssertionError 'Expected ' + errorMessage,
-                actual: actual
+                actual: wrapIfString actual
                 expected: expected
                 showDiff: isEqualityTest
 
