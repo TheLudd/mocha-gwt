@@ -42,31 +42,31 @@ mochaGWT = (suite) ->
       fn.apply(@)
       context.currentBlock = lastAtDepth[--depth]
 
-    global.describe =
-    global.context = addBlock
+    context.describe =
+    context.context = addBlock
 
-    global.describe.skip =
-    global.xdescribe =
-    global.context.skip =
-    global.xcontext = (title, fn) ->
+    context.describe.skip =
+    context.xdescribe =
+    context.context.skip =
+    context.xcontext = (title, fn) ->
       addBlock title, fn, pending: true
 
-    global.describe.only =
-    global.ddescribe =
-    global.context.only =
-    global.ccontext = (title, fn) ->
+    context.describe.only =
+    context.ddescribe =
+    context.context.only =
+    context.ccontext = (title, fn) ->
       addBlock title, fn, only: true
       onlyFound = true
 
-    global.Given = (fn) -> global.currentBlock.givens.push fn
-    global.When = (fn) -> global.currentBlock.whens.push fn
-    global.Then = (fn) -> global.currentBlock.thens.push fn
-    global.And = (fn) -> global.currentBlock.ands.push fn
-    global.Invariant = (fn) -> global.currentBlock.invariants.push fn
-    global.beforeAll = (fn) -> beforeAlls[file].push fn
-    global.afterAll = (fn) -> afterAlls[file].push fn
+    context.Given = (fn) -> context.currentBlock.givens.push fn
+    context.When = (fn) -> context.currentBlock.whens.push fn
+    context.Then = (fn) -> context.currentBlock.thens.push fn
+    context.And = (fn) -> context.currentBlock.ands.push fn
+    context.Invariant = (fn) -> context.currentBlock.invariants.push fn
+    context.beforeAll = (fn) -> beforeAlls[file].push fn
+    context.afterAll = (fn) -> afterAlls[file].push fn
 
-    global.afterBlock = (fn) -> global.currentBlock.afterBlocks.push fn
+    context.afterBlock = (fn) -> context.currentBlock.afterBlocks.push fn
 
   suite.on 'post-require', (context, file, mocha) ->
     processedFiles.push file
